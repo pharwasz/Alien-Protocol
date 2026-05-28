@@ -1,16 +1,3 @@
-use soroban_sdk::{contractevent, Address};
+use soroban_sdk::contractevent;
 
-#[allow(dead_code)]
-#[contractevent]
-pub struct Deposited {
-    pub user: Address,
-    pub asset: Address,
-    pub amount: i128,
-}
-
-#[contractevent]
-pub struct Withdrawn {
-    pub user: Address,
-    pub asset: Address,
-    pub amount: i128,
-}
+pub struct AddCollateralEvent {}

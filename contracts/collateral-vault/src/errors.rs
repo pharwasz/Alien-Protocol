@@ -5,8 +5,4 @@ use soroban_sdk::contracterror;
 #[repr(u32)]
 pub enum VaultError {
     InvalidInputs = 1,
-    NoPosition = 2,
-    VaultPaused = 3,
-    InsufficientCollateral = 4,
-    InsufficientBalance = 5,
 }
