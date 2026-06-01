@@ -129,16 +129,19 @@ impl VaultContract {
     }
 
     pub fn authorize_liquidation(env: Env, liquidation_engine: Address, user: Address) -> bool {
-        match get_liquidation_engine(&env) {
-            Some(engine) if engine == liquidation_engine => {}
+        let stored_engine = match get_liquidation_engine(&env) {
+            Some(engine) if engine == liquidation_engine => engine,
             _ => return false,
-        }
+        };
 
-        liquidation_engine.require_auth();
+        stored_engine.require_auth();
 
         get_user_position(&env, &user).unwrap_or_else(|_| panic!("{:?}", VaultError::NoPosition));
 
-        let lending_pool_address = get_lending_pool(&env).expect("Lending pool not set");
+        let lending_pool_address = match get_lending_pool(&env) {
+            Some(address) => address,
+            None => return false,
+        };
         let lending_pool_client = LendingPoolClient::new(&env, &lending_pool_address);
         lending_pool_client.is_liquidatable(&user)
     }
