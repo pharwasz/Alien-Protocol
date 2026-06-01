@@ -130,11 +130,15 @@ impl VaultContract {
 
     pub fn authorize_liquidation(env: Env, liquidation_engine: Address, user: Address) -> bool {
         let stored_engine = match get_liquidation_engine(&env) {
-            Some(engine) if engine == liquidation_engine => engine,
-            _ => return false,
+            Some(engine) => engine,
+            None => return false,
         };
 
-        stored_engine.require_auth();
+        if stored_engine != liquidation_engine {
+            return false;
+        }
+
+        liquidation_engine.require_auth();
 
         get_user_position(&env, &user).unwrap_or_else(|_| panic!("{:?}", VaultError::NoPosition));
 
