@@ -62,18 +62,6 @@ impl VaultContract {
         Ok(())
     }
 
-    pub fn set_lending_pool(env: Env, lending_pool: Address) {
-        let stored_admin = get_admin(&env).expect("Admin not set");
-        stored_admin.require_auth();
-        set_lending_pool(&env, &lending_pool);
-    }
-
-    pub fn set_liquidation_engine(env: Env, liquidation_engine: Address) {
-        let stored_admin = get_admin(&env).expect("Admin not set");
-        stored_admin.require_auth();
-        set_liquidation_engine(&env, &liquidation_engine);
-    }
-
     pub fn withdraw(
         env: Env,
         user: Address,
@@ -129,9 +117,9 @@ impl VaultContract {
     }
 
     pub fn authorize_liquidation(env: Env, liquidation_engine: Address, user: Address) -> bool {
-        match get_liquidation_engine(&env) {
-            Some(engine) if engine == liquidation_engine => {}
-            _ => return false,
+        let stored_liquidation_engine = get_liquidation_engine(&env).expect("Liquidation engine not set");
+        if liquidation_engine != stored_liquidation_engine {
+            panic!("{:?}", VaultError::Unauthorized);
         }
 
         liquidation_engine.require_auth();
