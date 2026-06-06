@@ -26,6 +26,18 @@ impl VaultContract {
         set_admin(&env, &admin);
     }
 
+    pub fn set_lending_pool(env: Env, lending_pool: Address) {
+        let stored_admin = get_admin(&env).expect("Admin not set");
+        stored_admin.require_auth();
+        set_lending_pool(&env, &lending_pool);
+    }
+
+    pub fn set_liquidation_engine(env: Env, liquidation_engine: Address) {
+        let stored_admin = get_admin(&env).expect("Admin not set");
+        stored_admin.require_auth();
+        set_liquidation_engine(&env, &liquidation_engine);
+    }
+
     pub fn deposite_collateral(
         env: Env,
         sender: Address,
@@ -117,7 +129,8 @@ impl VaultContract {
     }
 
     pub fn authorize_liquidation(env: Env, liquidation_engine: Address, user: Address) -> bool {
-        let stored_liquidation_engine = get_liquidation_engine(&env).expect("Liquidation engine not set");
+        let stored_liquidation_engine =
+            get_liquidation_engine(&env).expect("Liquidation engine not set");
         if liquidation_engine != stored_liquidation_engine {
             panic!("{:?}", VaultError::Unauthorized);
         }
